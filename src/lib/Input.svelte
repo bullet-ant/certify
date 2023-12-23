@@ -1,0 +1,1 @@
+<input type="text" name="CN" id="cn" placeholder="Enter CN">
