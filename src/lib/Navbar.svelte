@@ -2,15 +2,27 @@
   export let title;
 </script>
 
-<nav>
-  <h1>{title}</h1>
-</nav>
+<div class="navbar">
+  <div class="logo">
+    <img src="images/favicon.ico" alt="Logo" />
+  </div>
+  <div class="title">
+    {title}
+  </div>
+</div>
 
 <style>
-  /* Add your styling for the navbar here */
-  nav {
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .title {
     color: #333;
-    font-size: 24px;
+    font-size: 50px;
     text-align: center;
+    font-weight: bold;
   }
 </style>

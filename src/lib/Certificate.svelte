@@ -1,61 +1,46 @@
 <script>
-  import { rootCA } from "../store/store";
-  import { createCertificate } from "../helpers/node-forge";
-  import Download from "./Download.svelte";
+  import { rootCA, ssl, sslOptions } from "../store/store";
+  import {
+    createCertificate,
+    generatePKCS12Bundle,
+  } from "../helpers/node-forge";
 
-  let certificate = null;
-  let privateKey = null;
+  let password = "catonkeyboard";
 
   function generateCertificate() {
-    const pki = createCertificate($rootCA);
-    privateKey = pki.privateKey;
-    certificate = pki.certificate;
+    const pki = createCertificate($rootCA, $sslOptions);
+    $ssl.certificate = pki.certificate;
+    $ssl.privateKey = pki.privateKey;
+    $ssl.certificatePem = pki.certificatePem;
+    $ssl.privateKeyPem = pki.privateKeyPem;
+    generatePkcs12();
+  }
+
+  function generatePkcs12() {
+    const config = {
+      privateKey: $ssl.privateKey,
+      certificate: $ssl.certificatePem,
+      caCertificate: $rootCA.certificatePem,
+      password: password,
+    };
+    const pkcs12 = generatePKCS12Bundle(config);
+    $ssl.pkcs12 = pkcs12;
   }
 </script>
 
-<div class="container">
-  <button class="generate" on:click={generateCertificate}>
-    <h1>Generate Certificate</h1>
-  </button>
-  <div class="ca">
-    {#if certificate}
-      <Download title="Certificate" filename="server.crt" data={certificate}
-      ></Download>
-    {/if}
-    {#if privateKey}
-      <Download title="Private Key" filename="server.key" data={privateKey}
-      ></Download>
-    {/if}
+{#if $rootCA.privateKey}
+  <div class="new-certificate">
+    <button class="generate" on:click={generateCertificate}>
+      Generate Certificate
+    </button>
   </div>
-</div>
+{/if}
 
 <style>
-  .container {
-    margin-top: 50px;
-    flex: 1;
-    box-sizing: border-box;
-    height: 30vh;
+  .new-certificate {
+    margin-top: 10px;
     width: 100%;
-    padding: 20px;
-  }
-
-  .generate {
-    background-color: skyblue;
-    border: none;
-    text-decoration: none;
-    height: 100%;
-    width: 100%;
-    cursor: pointer;
-  }
-  .generate:hover {
-    background-color: blue;
-    color: white;
-  }
-
-  .ca {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    height: 6vh;
+    height: auto;
+    border: 1px solid red;
   }
 </style>

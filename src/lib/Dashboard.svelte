@@ -1,102 +1,88 @@
 <script>
-  import { rootCA } from "../store/store";
+  import { existingCA, rootCA, ssl, landingPage } from "../store/store";
+  import Ca from "./CA.svelte";
   import Certificate from "./Certificate.svelte";
-
-  import { createRootCA } from "../helpers/node-forge";
+  import CaConfig from "./CA-Config.svelte";
+  import CertificateConfig from "./Certificate-Config.svelte";
   import Download from "./Download.svelte";
+  import Options from "./Options.svelte";
 
-  const label = "Upload Existing CA";
-  const identifier = "key";
-
-  function parseFile(event) {
-    const reader = new FileReader();
-    const { file } = event.detail;
-
-    try {
-      reader.readAsText(file);
-
-      reader.onload = () => {
-        const file = reader.result;
-      };
-    } catch (error) {
-      console.error("Error parsing private key: ", error.message);
-    }
-  }
-
-  async function generateCA() {
-    const ca = await createRootCA();
-    $rootCA.privateKey = ca.privateKey;
-    $rootCA.certificate = ca.certificate;
-    $rootCA.privateKeyPem = ca.privateKeyPem;
-    $rootCA.certificatePem = ca.certificatePem;
+  function toggleCA() {
+    $existingCA = !$existingCA;
+    $rootCA = {
+      privateKey: null,
+      certificate: null,
+      privateKeyPem: null,
+      certificatePem: null,
+    };
+    $ssl = {
+      privateKey: null,
+      certificate: null,
+      privateKeyPem: null,
+      certificatePem: null,
+      pkcs12: null,
+    };
   }
 </script>
 
-<div class="section">
-  <!-- <div class="container">
-    <div class="dropzone-container">
-      <Dropzone {label} {identifier} on:upload={parseFile}></Dropzone>
-    </div>
-  </div> -->
-  <div class="container">
-    <button class="generate" on:click={generateCA}>
-      <h1>Generate New CA</h1>
-    </button>
+<main>
+  {#if $landingPage}
+    <Options></Options>
+  {:else}
     <div class="ca">
-      {#if $rootCA.privateKeyPem}
-        <Download
-          data={$rootCA.privateKeyPem}
-          filename="rootCA.key"
-          title="Private Key"
-        ></Download>
+      {#if $existingCA}
+        <div class="ca-choice">
+          <button on:click={toggleCA}>Create a new Root CA instead?</button>
+        </div>
+      {:else}
+        <div class="ca-choice">
+          <button on:click={toggleCA}>Already have an existing CA?</button>
+        </div>
+        <CaConfig></CaConfig>
       {/if}
-      {#if $rootCA.certificatePem}
-        <Download
-          data={$rootCA.certificatePem}
-          filename="rootCA.crt"
-          title="Certificate"
-        ></Download>
-      {/if}
+      <Ca></Ca>
+      <Download
+        title="CA Private Key"
+        filename="rootCA.key"
+        data={$rootCA.privateKeyPem}
+      ></Download>
+      <Download
+        title="CA Certificate"
+        filename="rootCA.crt"
+        data={$rootCA.certificatePem}
+      ></Download>
     </div>
-  </div>
-</div>
-{#if $rootCA.privateKey}
-  <Certificate></Certificate>
-{/if}
+    <div class="ssl">
+      <CertificateConfig></CertificateConfig>
+      <Certificate></Certificate>
+      <Download
+        title="SSL Private Key"
+        filename="server.key"
+        data={$ssl.privateKeyPem}
+      ></Download>
+      <Download
+        title="SSL Certificate"
+        filename="server.crt"
+        data={$ssl.certificatePem}
+      ></Download>
+      <Download
+        title="SSL PKCS12"
+        filename="server.p12"
+        data={$ssl.pkcs12}
+        binary={true}
+      ></Download>
+    </div>
+  {/if}
+</main>
 
 <style>
-  /* Apply styles to the parent div */
-  .section {
-    display: flex;
-    justify-content: space-around;
-    padding: 20px;
-    height: 30vh;
-  }
-
-  .container {
-    flex: 1;
-    box-sizing: border-box;
-    height: 100%;
-  }
-
-  .generate {
-    background-color: skyblue;
+  .ca-choice button {
+    font-size: 14px;
+    text-align: start;
     border: none;
-    text-decoration: none;
-    height: 100%;
-    width: 100%;
+    background-color: white;
     cursor: pointer;
-  }
-  .generate:hover {
-    background-color: blue;
-    color: white;
-  }
-
-  .ca {
-    display: flex;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    height: 6vh;
+    text-decoration: underline;
+    color: #333;
   }
 </style>

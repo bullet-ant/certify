@@ -1,6 +1,11 @@
 import * as forge from "node-forge";
 
-export async function createRootCA() {
+/**
+ * @param {{ commonName: String; country: String; organization: String; unit: String; }} [options]
+ */
+export async function createRootCA(options) {
+  const { commonName, country, organization, unit } = options;
+  console.log(options);
   const caKeys = forge.pki.rsa.generateKeyPair(2048);
   const caCert = forge.pki.createCertificate();
 
@@ -13,12 +18,10 @@ export async function createRootCA() {
   );
 
   const attrs = [
-    { name: "commonName", value: "Sample Root CA" },
-    { name: "countryName", value: "US" },
-    { shortName: "ST", value: "CA" },
-    { name: "localityName", value: "City" },
-    { name: "organizationName", value: "Organization" },
-    { shortName: "OU", value: "Unit" },
+    { name: "commonName", value: commonName },
+    { name: "countryName", value: country },
+    { name: "organizationName", value: organization },
+    { shortName: "OU", value: unit },
   ];
 
   caCert.setSubject(attrs);
@@ -27,6 +30,7 @@ export async function createRootCA() {
     {
       name: "basicConstraints",
       cA: true,
+      critical: true,
     },
     {
       name: "keyUsage",
@@ -48,7 +52,13 @@ export async function createRootCA() {
   };
 }
 
-export function createCertificate(rootCA) {
+/**
+ * @param {{ privateKey?: any; certificate?: any; privateKeyPem: any; certificatePem: any; }} rootCA
+ * @param {{ commonName: String; country: String; organization: String; unit: String; sans: String[]}} [options]
+ */
+export function createCertificate(rootCA, options) {
+  const { commonName, country, organization, unit, sans } = options;
+
   const caPrivateKey = forge.pki.privateKeyFromPem(rootCA.privateKeyPem);
   const caCert = forge.pki.certificateFromPem(rootCA.certificatePem);
 
@@ -62,31 +72,67 @@ export function createCertificate(rootCA) {
   cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
 
   const attrs = [
-    { name: "commonName", value: "Example Domain" },
-    { name: "countryName", value: "US" },
-    { shortName: "ST", value: "State" },
-    { name: "localityName", value: "City" },
-    { name: "organizationName", value: "Organization" },
-    { shortName: "OU", value: "Unit" },
+    { name: "commonName", value: commonName },
+    { name: "countryName", value: country },
+    { name: "organizationName", value: organization },
+    { shortName: "OU", value: unit },
   ];
-
-  cert.setSubject(attrs);
-  cert.setIssuer(caCert.subject.attributes);
 
   const sanExtension = {
     name: "subjectAltName",
-    altNames: [
-      { type: 2, value: "www.example.com" },
-      { type: 2, value: "example.com" },
-    ],
+    altNames: sans.map((/** @type {String} */ dns) => ({
+      type: 2,
+      value: dns,
+    })),
   };
-
+  cert.setSubject(attrs);
+  cert.setIssuer(caCert.subject.attributes);
   cert.setExtensions([sanExtension]);
 
   cert.sign(caPrivateKey);
 
   return {
-    privateKey: forge.pki.privateKeyToPem(certKeys.privateKey),
-    certificate: forge.pki.certificateToPem(cert),
+    privateKeyPem: forge.pki.privateKeyToPem(certKeys.privateKey),
+    certificatePem: forge.pki.certificateToPem(cert),
+    privateKey: certKeys.privateKey,
+    certificate: cert,
   };
+}
+
+export function generatePKCS12Bundle({
+  privateKey,
+  certificate,
+  caCertificate,
+  password,
+}) {
+  const certificateChain = [certificate, caCertificate];
+  try {
+    const p12Asn1 = forge.pkcs12.toPkcs12Asn1(
+      privateKey,
+      certificateChain,
+      password,
+      { algorithm: "3des" }
+    );
+    const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
+    // const p12b64 = forge.util.encode64(p12Der);
+
+    // return p12b64;
+    return p12Der;
+  } catch (error) {
+    console.error("Error generating PKCS#12 bundle:", error);
+    throw error;
+  }
+}
+
+export function loadCA(file, type) {
+  try {
+    switch (type) {
+      case 1:
+        return forge.pki.certificateFromPem(file);
+      case 2:
+        return forge.pki.privateKeyFromPem(file);
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
