@@ -3,6 +3,7 @@
   export let filename;
   export let title;
   export let binary = false;
+  export let buttonColor = "#77FC31";
 
   const downloadFile = (data, filename) => {
     if (binary) {
@@ -25,9 +26,14 @@
 </script>
 
 {#if data && data.length}
-  <button class="download" on:click={() => downloadFile(data, filename)}
-    >Download {title}</button
-  >
+  <div class="download">
+    <button
+      style="background-color: {buttonColor};"
+      class="download-button"
+      on:click={() => downloadFile(data, filename)}
+      ><i class="fa-solid fa-download"></i> {title}</button
+    >
+  </div>
 {/if}
 
 <style>
@@ -40,9 +46,15 @@
     background-color: gold;
   } */
   .download {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 15px;
+    margin-top: 2px;
+    border-right: 3px solid #333;
+    border-bottom: 3px solid #333;
+  }
+  .download-button {
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    padding: 4px 8px;
     border: none;
     cursor: pointer;
     text-decoration: none;

@@ -1,5 +1,5 @@
 <script>
-  import { rootCA, ssl, sslOptions } from "../store/store";
+  import { loadingSsl, rootCA, ssl, sslOptions } from "../store/store";
   import {
     createCertificate,
     generatePKCS12Bundle,
@@ -7,13 +7,15 @@
 
   let password = "catonkeyboard";
 
-  function generateCertificate() {
-    const pki = createCertificate($rootCA, $sslOptions);
+  async function generateCertificate() {
+    $loadingSsl = true;
+    const pki = await createCertificate($rootCA, $sslOptions);
     $ssl.certificate = pki.certificate;
     $ssl.privateKey = pki.privateKey;
     $ssl.certificatePem = pki.certificatePem;
     $ssl.privateKeyPem = pki.privateKeyPem;
     generatePkcs12();
+    $loadingSsl = false;
   }
 
   function generatePkcs12() {
@@ -38,9 +40,28 @@
 
 <style>
   .new-certificate {
+    display: flex;
+    justify-content: end;
+    width: 97.5%;
+    text-align: center;
     margin-top: 10px;
-    width: 100%;
-    height: auto;
-    border: 1px solid red;
+  }
+  .new-certificate button {
+    /* margin-right: 3vw; */
+    padding: 6px 10px;
+    border: none;
+    border-right: 4px solid #333;
+    border-bottom: 4px solid #333;
+    border-radius: 4px;
+    height: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #3177fc;
+    cursor: pointer;
+  }
+  .new-certificate button:active {
+    border-right: 2px solid #333;
+    border-bottom: 2px solid #333;
   }
 </style>

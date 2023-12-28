@@ -17,12 +17,12 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 24px;
+    margin-top: 14px;
+    margin-bottom: 6px;
   }
   .title {
     color: #333;
-    font-size: 50px;
-    text-align: center;
+    font-size: 36px;
     font-weight: bold;
   }
 </style>

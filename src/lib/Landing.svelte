@@ -28,9 +28,7 @@
   .options {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 4%;
+    justify-content: space-evenly;
   }
   .existing,
   .new {
@@ -38,6 +36,7 @@
     text-align: center;
   }
   img {
-    width: 100%;
+    height: 400px;
+    width: 600px;
   }
 </style>

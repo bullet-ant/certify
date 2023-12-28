@@ -15,7 +15,7 @@
 <style>
   label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     font-weight: bold;
     color: #333;
   }
@@ -26,7 +26,7 @@
 
   input {
     width: 100%;
-    padding: 8px;
+    padding: 6px;
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 4px;

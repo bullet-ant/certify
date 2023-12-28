@@ -4,7 +4,7 @@
   export let id = "default-id";
   export let list = [];
   export let validate = /.*/;
-  
+
   let entry = "";
   let error = "";
 
@@ -36,16 +36,8 @@
 </script>
 
 <div>
-  {#each list as item, index (index)}
-    <div>
-      <span>{item}</span>
-      <button on:click={() => removeItem(index)}
-        ><i class="fa-solid fa-trash"></i></button
-      >
-    </div>
-  {/each}
   <label for={id}>{label}</label>
-  <div>
+  <div class="multi-add">
     <input
       type="text"
       bind:value={entry}
@@ -53,8 +45,18 @@
       {placeholder}
       on:keydown={onEnter}
     />
-    <button on:click={addItem}><i class="fa-solid fa-add"></i></button>
+    <button class="add" on:click={addItem}
+      ><i class="fa-solid fa-plus"></i></button
+    >
   </div>
+  {#each list as item, index (index)}
+    <div class="sans">
+      <span>{item}</span>
+      <button class="remove" on:click={() => removeItem(index)}
+        ><i class="fa-solid fa-trash"></i></button
+      >
+    </div>
+  {/each}
 </div>
 {#if error}
   <div class="error">
@@ -63,5 +65,59 @@
 {/if}
 
 <style>
-  /* Add your styles here if needed */
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  div {
+    position: relative;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    border-color: #007bff;
+  }
+
+  .multi-add {
+    display: flex;
+    gap: 10px;
+  }
+  .add {
+    background-color: #333;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    /* padding: 6px 8px; */
+    padding: 6px 10px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .sans {
+    margin-top: 4px;
+    /* border: 1px solid black; */
+  }
+  .remove {
+    background-color: #fff;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+  }
 </style>

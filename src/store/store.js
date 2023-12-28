@@ -37,4 +37,6 @@ export const ssl = writable(sslInitialized);
 export const caOptions = writable(caOptionsInitialized);
 export const sslOptions = writable(sslOptionsInitialized);
 export const existingCA = writable(false);
-export const landingPage = writable(true);
+export const landingPage = writable(false);
+export const loadingCa = writable(false);
+export const loadingSsl = writable(false);

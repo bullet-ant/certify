@@ -5,7 +5,6 @@
 
 <div class="config">
   <div class="column-1">
-    <div class="country"></div>
     <div class="country">
       <Input
         bind:value={$caOptions.country}
@@ -47,7 +46,19 @@
   .config {
     display: flex;
     align-items: center;
-    justify-content: start;
+    justify-content: space-evenly;
     gap: 16px;
+    width: 100%;
+  }
+
+  .column-1,
+  .column-2 {
+    width: 45vw;
+  }
+  .column-1 > div:not(:first-child) {
+    margin-top: 10px;
+  }
+  .column-2 > div:not(:first-child) {
+    margin-top: 10px;
   }
 </style>
