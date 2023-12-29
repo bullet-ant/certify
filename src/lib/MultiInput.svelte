@@ -4,6 +4,7 @@
   export let id = "default-id";
   export let list = [];
   export let validate = /.*/;
+  export let tooltip = "Default message";
 
   let entry = "";
   let error = "";
@@ -36,7 +37,15 @@
 </script>
 
 <div>
-  <label for={id}>{label}</label>
+  <div class="label">
+    <label for={id}>{label}</label>
+    <div class="tooltip">
+      <i class="fa-solid fa-info-circle"></i>
+      <div class="tooltip-message">
+        {tooltip}
+      </div>
+    </div>
+  </div>
   <div class="multi-add">
     <input
       type="text"
@@ -53,7 +62,7 @@
     <div class="sans">
       <span>{item}</span>
       <button class="remove" on:click={() => removeItem(index)}
-        ><i class="fa-solid fa-trash"></i></button
+        ><i class="fa-solid fa-trash-can"></i></button
       >
     </div>
   {/each}
@@ -65,15 +74,40 @@
 {/if}
 
 <style>
-  label {
-    display: block;
-    margin-bottom: 6px;
+  div {
+    position: relative;
+  }
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 1%;
+    margin-bottom: 0.75%;
     font-weight: bold;
     color: #333;
   }
 
-  div {
-    position: relative;
+  .tooltip {
+    cursor: pointer;
+    flex: 1;
+  }
+  .tooltip-message {
+    font-size: 12px;
+    font-weight: 400;
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 0%;
+    left: 5%;
+    background-color: #333;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 1;
+  }
+  .tooltip:hover .tooltip-message {
+    visibility: visible;
+    opacity: 1;
   }
 
   input {
@@ -119,5 +153,8 @@
     border: none;
     cursor: pointer;
     text-decoration: none;
+  }
+  .remove:hover {
+    color: #f65177;
   }
 </style>

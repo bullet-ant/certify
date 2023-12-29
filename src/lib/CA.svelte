@@ -98,8 +98,8 @@
   .existing-certificate,
   .existing-key {
     background-color: #FC3177;
-    border-right: 3px solid #333;
-    border-bottom: 3px solid #333;
+    border-right: 4px solid #333;
+    border-bottom: 4px solid #333;
     color: #fff;
     width: 43vw;
     padding: 0.9vw;

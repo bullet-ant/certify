@@ -11,18 +11,20 @@
     <div class="column-1">
       <div class="input">
         <Input
-          bind:value={$sslOptions.commonName}
-          id="ssl-cn"
-          label="Common Name"
-          placeholder="Enter Common Name"
-        ></Input>
-      </div>
-      <div class="input">
-        <Input
           bind:value={$sslOptions.country}
           id="ssl-country"
           label="Country"
           placeholder="Enter country"
+          tooltip="The two-letter code representing the country where the organization is located."
+        ></Input>
+      </div>
+      <div class="input">
+        <Input
+          bind:value={$sslOptions.commonName}
+          id="ssl-cn"
+          label="Common Name"
+          placeholder="Enter Common Name"
+          tooltip="The fully qualified domain name (FQDN) for which the certificate is issued"
         ></Input>
       </div>
       <div class="multi-input">
@@ -31,6 +33,7 @@
           id="ssl-sans"
           label="Subject Alternative Names"
           placeholder="Enter SAN domains"
+          tooltip="Additional domain names that the certificate is valid for."
           validate={sansRegex}
         ></MultiInput>
       </div>
@@ -42,6 +45,7 @@
           id="ssl-organization"
           label="Organization"
           placeholder="Enter organization"
+          tooltip="The legal name of the organization."
         ></Input>
       </div>
       <div class="input">
@@ -50,6 +54,7 @@
           id="ssl-ou"
           label="Organization Unit"
           placeholder="Enter organization unit"
+          tooltip="The name of the specific unit or department within the organization."
         ></Input>
       </div>
       <div></div>

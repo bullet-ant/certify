@@ -8,6 +8,7 @@
     <div class="country">
       <Input
         bind:value={$caOptions.country}
+        tooltip="The two-letter code representing the country where the organization is located."
         id="ca-country"
         label="Country"
         placeholder="Enter country"
@@ -19,6 +20,7 @@
         id="ca-cn"
         label="Common Name"
         placeholder="Enter Common Name"
+        tooltip="The fully qualified domain name (FQDN) for which the certificate is issued."
       ></Input>
     </div>
   </div>
@@ -28,6 +30,7 @@
         bind:value={$caOptions.organization}
         id="ca-organization"
         label="Organization"
+        tooltip="The legal name of the organization."
         placeholder="Enter organization"
       ></Input>
     </div>
@@ -37,6 +40,7 @@
         id="ca-ou"
         label="Organization Unit"
         placeholder="Enter organization unit"
+        tooltip="The name of the specific unit or department within the organization."
       ></Input>
     </div>
   </div>
