@@ -47,8 +47,6 @@
   } */
   .download {
     margin-top: 2px;
-    border-right: 3px solid #333;
-    border-bottom: 3px solid #333;
   }
   .download-button {
     font-size: 12px;
@@ -58,5 +56,11 @@
     border: none;
     cursor: pointer;
     text-decoration: none;
+    border-right: 3px solid #333;
+    border-bottom: 3px solid #333;
+  }
+  .download-button:active {
+    border-right: 1.5px solid #333;
+    border-bottom: 1.5px solid #333;
   }
 </style>
