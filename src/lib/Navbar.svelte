@@ -24,5 +24,9 @@
     color: #333;
     font-size: 36px;
     font-weight: bold;
+    transition: all 0.4s;
+  }
+  .title:hover {
+    transform: skew(-16deg);
   }
 </style>

@@ -109,7 +109,7 @@
     justify-content: end;
     width: 97.5%;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 14px;
   }
   .new-ca button {
     /* margin-right: 3vw; */

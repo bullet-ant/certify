@@ -29,6 +29,7 @@ const sslOptionsInitialized = {
   organization: "Mobileum Inc.",
   unit: "Security",
   sans: [],
+  password: "catonkeyboard"
 };
 
 export const serialNumber = writable(0);

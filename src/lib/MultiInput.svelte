@@ -60,7 +60,7 @@
   </div>
   {#each list as item, index (index)}
     <div class="sans">
-      <span>{item}</span>
+      <span class="sans-item">{item}</span>
       <button class="remove" on:click={() => removeItem(index)}
         ><i class="fa-solid fa-trash-can"></i></button
       >
@@ -112,7 +112,7 @@
 
   input {
     width: 100%;
-    padding: 8px;
+    padding: 6px;
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -142,12 +142,12 @@
   }
   .sans {
     margin-top: 4px;
+    font-size: 14px;
     /* border: 1px solid black; */
   }
   .remove {
     background-color: #fff;
     border-radius: 4px;
-    font-size: 16px;
     font-weight: bold;
     color: #333;
     border: none;

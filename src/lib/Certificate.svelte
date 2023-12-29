@@ -23,7 +23,7 @@
       privateKey: $ssl.privateKey,
       certificate: $ssl.certificatePem,
       caCertificate: $rootCA.certificatePem,
-      password: password,
+      password: $sslOptions.password,
     };
     const pkcs12 = generatePKCS12Bundle(config);
     $ssl.pkcs12 = pkcs12;
@@ -44,7 +44,7 @@
     justify-content: end;
     width: 97.5%;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 14px;
   }
   .new-certificate button {
     /* margin-right: 3vw; */

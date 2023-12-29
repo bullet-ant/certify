@@ -57,7 +57,16 @@
           tooltip="The name of the specific unit or department within the organization."
         ></Input>
       </div>
-      <div></div>
+      <div class="input">
+        <Input
+          bind:value={$sslOptions.password}
+          id="ssl-password"
+          label="Password"
+          placeholder="Enter a password"
+          tooltip="A passphrase to protect the PKCS12 file."
+          type="password"
+        ></Input>
+      </div>
     </div>
   </div>
 {/if}

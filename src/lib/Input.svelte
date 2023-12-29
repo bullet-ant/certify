@@ -3,9 +3,15 @@
   export let placeholder = "Default Placeholder";
   export let id = "default-id";
   export let value = "";
+  export let type = "text";
   export let tooltip = "Default message";
 
+  let showPassword = false;
+
   const onInput = (e) => (value = e.target.value);
+  const toggleVisibility = () => {
+    showPassword = !showPassword;
+  };
 </script>
 
 <div class="label">
@@ -17,8 +23,16 @@
     </div>
   </div>
 </div>
-<div>
-  <input type="text" bind:value {id} {placeholder} on:input={onInput} />
+<div class="input">
+  {#if type === "password" && !showPassword}
+    <input type="password" bind:value {id} {placeholder} on:input={onInput} />
+  {:else}
+    <input type="text" bind:value {id} {placeholder} on:input={onInput} />
+  {/if}
+  {#if type === "password"}
+    <i class="fa-solid fa-eye" id="toggleVisibility" on:click={toggleVisibility}
+    ></i>
+  {/if}
 </div>
 
 <style>
@@ -70,5 +84,15 @@
 
   input:focus {
     border-color: #007bff;
+  }
+  #toggleVisibility {
+    cursor: pointer;
+    position: absolute;
+    top: 9px;
+    right: 8px;
+  }
+  .input {
+    display: flex;
+    align-items: center;
   }
 </style>
