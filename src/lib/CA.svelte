@@ -97,7 +97,7 @@
   }
   .existing-certificate,
   .existing-key {
-    background-color: #FC3177;
+    background-color: #ff0133;
     border-right: 4px solid #333;
     border-bottom: 4px solid #333;
     color: #fff;

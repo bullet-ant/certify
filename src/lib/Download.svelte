@@ -3,7 +3,7 @@
   export let filename;
   export let title;
   export let binary = false;
-  export let buttonColor = "#77FC31";
+  export let buttonColor = "#33ff01";
 
   const downloadFile = (data, filename) => {
     if (binary) {

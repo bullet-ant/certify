@@ -155,6 +155,6 @@
     text-decoration: none;
   }
   .remove:hover {
-    color: #f65177;
+    color: #ff0133;
   }
 </style>
