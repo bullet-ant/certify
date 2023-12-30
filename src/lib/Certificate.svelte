@@ -57,7 +57,7 @@
     font-size: 16px;
     font-weight: bold;
     color: #fff;
-    background-color: #3177fc;
+    background-color: #0133ff;
     cursor: pointer;
   }
   .new-certificate button:active {
