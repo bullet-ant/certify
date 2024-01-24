@@ -1,77 +1,21 @@
 import * as forge from "node-forge";
 
+const ROOT_CA_KEY_SIZE = 4096;
+const CERTIFICATE_KEY_SIZE = 4096;
+const PKCS12_ALGORITHM = "aes256";
+
 /**
  * @param {{ commonName: String; country: String; organization: String; unit: String; }} [options]
  */
-// export async function createRootCA(options) {
-//   const { commonName, country, organization, unit } = options;
-//   console.log(options);
-
-//   forge.pki.rsa.generateKeyPair(
-//     { bits: 2048, workers: 2 },
-//     function (err, keypair) {
-//       if (err) {
-//         console.error("Error generating keys");
-//       }
-//       const caKeys = keypair;
-//       console.log(caKeys);
-
-//       const caCert = forge.pki.createCertificate();
-
-//       caCert.publicKey = caKeys.publicKey;
-//       caCert.serialNumber = "01";
-//       caCert.validity.notBefore = new Date();
-//       caCert.validity.notAfter = new Date();
-//       caCert.validity.notAfter.setFullYear(
-//         caCert.validity.notBefore.getFullYear() + 1
-//       );
-
-//       const attrs = [
-//         { name: "commonName", value: commonName },
-//         { name: "countryName", value: country },
-//         { name: "organizationName", value: organization },
-//         { shortName: "OU", value: unit },
-//       ];
-
-//       caCert.setSubject(attrs);
-//       caCert.setIssuer(attrs);
-//       caCert.setExtensions([
-//         {
-//           name: "basicConstraints",
-//           cA: true,
-//           critical: true,
-//         },
-//         {
-//           name: "keyUsage",
-//           keyCertSign: true,
-//           digitalSignature: true,
-//           nonRepudiation: true,
-//           keyEncipherment: true,
-//           dataEncipherment: true,
-//         },
-//       ]);
-
-//       caCert.sign(caKeys.privateKey);
-
-//       return {
-//         privateKeyPem: forge.pki.privateKeyToPem(caKeys.privateKey),
-//         certificatePem: forge.pki.certificateToPem(caCert),
-//         privateKey: caKeys.privateKey,
-//         certificate: caCert,
-//       };
-//     }
-//   );
-// }
-
 export function createRootCA(options) {
   return new Promise((resolve, reject) => {
     const { commonName, country, organization, unit } = options;
 
     forge.pki.rsa.generateKeyPair(
-      { bits: 2048, workers: 2 },
-      function (err, keypair) {
+      { bits: ROOT_CA_KEY_SIZE, workers: 2 },
+      (err, keypair) => {
         if (err) {
-          reject(err); // Reject the promise with the error
+          reject(err);
           return;
         }
 
@@ -94,23 +38,25 @@ export function createRootCA(options) {
 
         caCert.setSubject(attrs);
         caCert.setIssuer(attrs);
-        caCert.setExtensions([
-          {
-            name: "basicConstraints",
-            cA: true,
-            critical: true,
-          },
-          {
-            name: "keyUsage",
-            keyCertSign: true,
-            digitalSignature: true,
-            nonRepudiation: true,
-            keyEncipherment: true,
-            dataEncipherment: true,
-          },
-        ]);
 
-        caCert.sign(keypair.privateKey);
+        const basicConstraintsExtension = {
+          name: "basicConstraints",
+          cA: true,
+          critical: true,
+        };
+
+        const keyUsageExtension = {
+          name: "keyUsage",
+          keyCertSign: true,
+          digitalSignature: true,
+          nonRepudiation: true,
+          keyEncipherment: true,
+          dataEncipherment: true,
+        };
+
+        caCert.setExtensions([basicConstraintsExtension, keyUsageExtension]);
+
+        caCert.sign(keypair.privateKey, forge.md.sha256.create());
 
         const result = {
           privateKeyPem: forge.pki.privateKeyToPem(keypair.privateKey),
@@ -119,7 +65,7 @@ export function createRootCA(options) {
           certificate: caCert,
         };
 
-        resolve(result); // Resolve the promise with the result
+        resolve(result);
       }
     );
   });
@@ -129,49 +75,6 @@ export function createRootCA(options) {
  * @param {{ privateKey?: any; certificate?: any; privateKeyPem: any; certificatePem: any; }} rootCA
  * @param {{ commonName: String; country: String; organization: String; unit: String; sans: String[]}} [options]
  */
-// export function createCertificate(rootCA, options) {
-//   const { commonName, country, organization, unit, sans } = options;
-
-//   const caPrivateKey = forge.pki.privateKeyFromPem(rootCA.privateKeyPem);
-//   const caCert = forge.pki.certificateFromPem(rootCA.certificatePem);
-
-//   const certKeys = forge.pki.rsa.generateKeyPair(2048);
-//   const cert = forge.pki.createCertificate();
-
-//   cert.publicKey = certKeys.publicKey;
-//   cert.serialNumber = "02";
-//   cert.validity.notBefore = new Date();
-//   cert.validity.notAfter = new Date();
-//   cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
-
-//   const attrs = [
-//     { name: "commonName", value: commonName },
-//     { name: "countryName", value: country },
-//     { name: "organizationName", value: organization },
-//     { shortName: "OU", value: unit },
-//   ];
-
-//   const sanExtension = {
-//     name: "subjectAltName",
-//     altNames: sans.map((/** @type {String} */ dns) => ({
-//       type: 2,
-//       value: dns,
-//     })),
-//   };
-//   cert.setSubject(attrs);
-//   cert.setIssuer(caCert.subject.attributes);
-//   cert.setExtensions([sanExtension]);
-
-//   cert.sign(caPrivateKey);
-
-//   return {
-//     privateKeyPem: forge.pki.privateKeyToPem(certKeys.privateKey),
-//     certificatePem: forge.pki.certificateToPem(cert),
-//     privateKey: certKeys.privateKey,
-//     certificate: cert,
-//   };
-// }
-
 export function createCertificate(rootCA, options) {
   return new Promise((resolve, reject) => {
     const { commonName, country, organization, unit, sans } = options;
@@ -180,18 +83,20 @@ export function createCertificate(rootCA, options) {
     const caCert = forge.pki.certificateFromPem(rootCA.certificatePem);
 
     forge.pki.rsa.generateKeyPair(
-      { bits: 2048, workers: 2 },
+      { bits: CERTIFICATE_KEY_SIZE, workers: 2 },
       function (err, certKeys) {
         if (err) {
           console.error("Error generating keys");
-          reject(err); // Reject the promise with the error
+          reject(err);
           return;
         }
 
         const cert = forge.pki.createCertificate();
 
         cert.publicKey = certKeys.publicKey;
-        cert.serialNumber = "02";
+        cert.serialNumber = forge.util.bytesToHex(
+          forge.random.getBytesSync(16)
+        );
         cert.validity.notBefore = new Date();
         cert.validity.notAfter = new Date();
         cert.validity.notAfter.setFullYear(
@@ -207,17 +112,17 @@ export function createCertificate(rootCA, options) {
 
         const sanExtension = {
           name: "subjectAltName",
-          altNames: sans.map((/** @type {String} */ dns) => ({
+          altNames: sans.map((dns) => ({
             type: 2,
             value: dns,
           })),
         };
+
         cert.setSubject(attrs);
         cert.setIssuer(caCert.subject.attributes);
         cert.setExtensions([sanExtension]);
 
-        cert.sign(caPrivateKey);
-
+        cert.sign(caPrivateKey, forge.md.sha256.create());
         const result = {
           privateKeyPem: forge.pki.privateKeyToPem(certKeys.privateKey),
           certificatePem: forge.pki.certificateToPem(cert),
@@ -225,7 +130,7 @@ export function createCertificate(rootCA, options) {
           certificate: cert,
         };
 
-        resolve(result); // Resolve the promise with the result
+        resolve(result);
       }
     );
   });
@@ -243,12 +148,10 @@ export function generatePKCS12Bundle({
       privateKey,
       certificateChain,
       password,
-      { algorithm: "3des" }
+      { algorithm: PKCS12_ALGORITHM }
     );
     const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
-    // const p12b64 = forge.util.encode64(p12Der);
 
-    // return p12b64;
     return p12Der;
   } catch (error) {
     console.error("Error generating PKCS#12 bundle:", error);
@@ -263,6 +166,8 @@ export function loadCA(file, type) {
         return forge.pki.certificateFromPem(file);
       case 2:
         return forge.pki.privateKeyFromPem(file);
+      default:
+        throw new Error("Invalid CA type");
     }
   } catch (error) {
     throw new Error(error.message);
