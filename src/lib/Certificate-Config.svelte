@@ -34,7 +34,6 @@
           label="Subject Alternative Names"
           placeholder="Enter SAN domains"
           tooltip="Additional domain names that the certificate is valid for."
-          validate={sansRegex}
         ></MultiInput>
       </div>
     </div>
