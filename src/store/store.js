@@ -16,20 +16,21 @@ const sslInitialized = {
 };
 
 const caOptionsInitialized = {
-  commonName: "CertifyCA",
+  commonName: "certify.amancodes.me",
   country: "IN",
-  organization: "Mobileum Inc.",
+  organization: "Certify Inc.",
   unit: "Security",
   sans: [],
 };
 
 const sslOptionsInitialized = {
-  commonName: "SEPP",
+  commonName: "amancodes.me",
   country: "IN",
-  organization: "Mobileum Inc.",
+  organization: "Certify Inc.",
   unit: "Security",
   sans: [],
-  password: "catonkeyboard"
+  alias: "certify",
+  password: "catonkeyboard",
 };
 
 export const serialNumber = writable(0);

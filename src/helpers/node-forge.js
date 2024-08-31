@@ -3,6 +3,7 @@ import * as forge from "node-forge";
 const ROOT_CA_KEY_SIZE = 4096;
 const CERTIFICATE_KEY_SIZE = 4096;
 const PKCS12_ALGORITHM = "aes256";
+const PKCS12_ALIAS = "certify";
 
 /**
  * @param {{ commonName: String; country: String; organization: String; unit: String; }} [options]
@@ -148,7 +149,7 @@ export function generatePKCS12Bundle({
       privateKey,
       certificateChain,
       password,
-      { algorithm: PKCS12_ALGORITHM }
+      { algorithm: PKCS12_ALGORITHM, friendlyName: PKCS12_ALIAS }
     );
     const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
 
