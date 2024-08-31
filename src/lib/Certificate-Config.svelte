@@ -27,6 +27,15 @@
           tooltip="The fully qualified domain name (FQDN) for which the certificate is issued"
         ></Input>
       </div>
+      <div class="input">
+        <Input
+          bind:value={$sslOptions.alias}
+          id="ssl-alias"
+          label="Key Alias"
+          placeholder="Enter key alias"
+          tooltip="The alias for the key in the PKCS12 file."
+        ></Input>
+      </div>
       <div class="multi-input">
         <MultiInput
           bind:list={$sslOptions.sans}
